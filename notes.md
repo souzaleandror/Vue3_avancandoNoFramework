@@ -556,3 +556,286 @@ O que aprendemos?
 Nessa aula, você aprendeu:
 Instalar e configurar o vuex num projeto existente:
 Vimos que o Vue é um framework progressivo e não vem com uma biblioteca de gerenciamento de estado instalada por padrão. Logo, instalamos e configuramos o vuex para gerir nosso estado global.
+
+#### 08/02/2024
+
+@03-Evoluindo o Alura Tracker
+
+@@01
+Projeto da aula anterior
+PRÓXIMA ATIVIDADE
+
+Caso queira começar daqui, você pode baixar o projeto da aula anterior nesse link.
+
+https://github.com/alura-cursos/tracker-2/tree/aula-2
+
+@@02
+Extraindo a view do
+
+[00:00] Nós já temos aqui a nossa listagem de projetos cadastrando projetos, integrando com a nossa lista de tarefas, e precisamos agora implementar essa funcionalidade e permitir que o usuário edite um projeto. Dado um projeto qualquer que ele cadastrou, eu vou cadastrar aqui, por exemplo, o "Plano de estudos", que quero criar um router link aqui, um link, que ele vai clicar e me permitir editar o nome desse projeto.
+[00:28] O que precisamos fazer para permitir que isso aconteça, de forma coesa? A primeira coisa que precisamos, logo na largada, já identificar e trabalhar é a parte de roteamento. Repare comigo que na nossa view de projetos, nós temos a responsabilidade de cadastrar um projeto e editar esse projeto - e listar esse projeto, desculpe.
+
+[00:53] Então precisamos começar a separar essas responsabilidades. Então vamos extrair essa lógica e deixar uma visualização para o formulário de projeto e outra para a listagem de projetos. Vou começar a fazer isso aqui, vou copiar o componente como ele está e vou criar uma pasta nova, dentro de "views", chamada "Projetos". Eu vou colar o "Projetos.vue" lá dentro.
+
+[01:18] Essa view de projetos, que acabamos de copiar, eu vou renomear ela para "Formulario.vue" e também vou mudar o nome dela para name: "Formulario",.
+
+[01:31] Agora, o que podemos fazer? Tudo o que estiver aqui, que não está relacionado com o nosso formulário, ou seja, com a parte de incluir um novo projeto, nós vamos deletar. Nós vamos deletar a tabela que lista os projetos, vamos deletar também a parte de computed property que retorna a lista de projetos.
+
+[01:51] Podemos também deletar o import desse computed, que não usamos mais. Já limpamos e temos o nosso formulário. Agora vamos fazer o inverso, vamos limpar a nossa view de projetos, "Projetos.vue". Na nossa view de projetos, vamos deletar todo o formulário e tudo o que estiver relacionado a cadastrar um projeto novo.
+
+[02:13] Então o estado local, com o nome de projeto, nós não precisamos, o método com o salvar nós não precisamos, e também não precisamos retornar a store para ela ficar disponível para o componente, só vamos retornar a lista de projetos. Vamos salvar esse código e vamos voltar para o nosso "Formulario.vue".
+
+[02:31] Agora, logo na sequência, depois que nós cadastrarmos um projeto novo, nós vamos redirecionar o usuário para a lista de projetos. Nós precisamos programaticamente redirecionar e trocar a rota. Como fazemos isso? Quando usamos o view router, podemos ter acesso à instância dele em qualquer componente, ele fica disponível por padrão.
+
+[02:55] Então podemos chamar this.$router, que significa que é o nosso roteador, this.$router.push(' '). Esse push recebe uma rota nova, que queremos direcionar o usuário. Nós vamos redirecionar ele para ('/projetos'), que é a URL que temos cadastrada, que lista os projetos.
+
+[03:15] Agora vamos para o nosso "roteador > index.ts". Já temos a rota /projetos', que define a lista de projetos cadastrados pelo usuário. Agora vamos criar duas novas rotas, uma para o usuário conseguir continuar criando projetos, e outra para ele fazer a edição. Vamos lá, vou copiar e colar, vou criar uma rota nova, será path: '/projetos/novo',.
+
+[03:40] O nome dela vai ser name: 'Novo projeto', e o componente vai ser component: Formulario. Também vou criar uma rota para fazermos a edição de um projeto. Como fazemos isso?
+
+[03:56] Nós precisamos aqui, no segmento da URL, receber aquele ID, aquele new data que pegamos uma string, com um timestamp da hora atual. Nós precisamos receber ele na URL e através desta URL, deste segmento da URL, pegar esse valor e deixar disponível no nosso componente. Como fazemos isso usando o roteador?
+
+[04:21] Lá no segmento do caminho, do path que estamos definindo, nós vamos colocar dois pontos, que indica que isso é um segmento dinâmico. Vamos chamar e vamos dizer o nome desse segmento. Eu vou dizer que o nome desse segmento é path: '/projetos/:id', e vou alterar o nome da rota para name: Editar projeto',.
+
+[04:42] Todas as duas rotas vão usar o mesmo componente de formulário, agora está faltando importar ele. Vou aqui em cima, logo no começo do meu arquivo, import Formulario from '../, volta uma pasta, from '../views/Projetos/Formulario.vue'.
+
+[05:02] Ele já achou, e temos agora a rota para o projeto novo e para editar um projeto existente. Agora precisamos criar links para esse cara. Vamos pegar e criar aqui, logo embaixo do <h1>, eu vou trazer a minha cola, para eu não ficar digitando um monte de HTML. Então aqui, logo embaixo do <h1>, eu vou pegar a minha cola do router link
+
+<router-link to="/projetos/novo" class="button">
+      <span class="icon is-small">
+        <i class="fas fa-plus"></i>
+      </span>
+      <span>Novo projeto</span>
+    </router-link>COPIAR CÓDIGO
+e vou colar.
+
+[05:29] Logo que passamos o título da página, que é projetos, inserimos um router link, ele tem a propriedade to, nós já usamos ela na nossa barra de navegação, e ele vai linkar para /projetos/novo. E tem um ícone, que é um ícone de mais, que ele vai indicar para o usuário que é para ele cadastrar um novo projeto.
+
+[05:51] Além disso, na nossa tabela, vamos criar um <th> novo, que será as Ações, as ações que estão disponíveis para o usuário. Vou criar aqui também, no nosso <tbody>, <tr>, um novo <td>, que vai conter o link. Também vou pegar da minha cola:
+
+<router-link :to="`/projetos/${projeto.id}`" class="button">
+              <span class="icon is-small">
+                <i class="fas fa-pencil-alt"></i>
+              </span>
+            </router-link>COPIAR CÓDIGO
+para não ficar digitando aquele monte de HTML. Ele será um router link, trouxe para cá um router link.
+
+[06:16] Ajustei a indentação. Repare comigo que ele é um router link, que ele vai linkar o usuário para '/projeto/${projeto.id}, e a URL será dinâmica, mudando de acordo com o ID do projeto. Vou salvar aqui, vamos ver se esse monte de alterações que nós fizemos funciona. Dividimos uma view em duas, separando o formulário da tabela, e criamos as rotas novas, uma rota para criar um projeto novo e outra para editar um já existente.
+
+[06:47] Vou minimizar o VS Code, no navegador eu vou limpar o console, vou recarregar a página, limpo ele novamente. Se eu clicar em novo projeto, vamos cadastrar o "Plano de estudos", salvei.
+
+[06:59] Ele já inseriu na lista de projetos, exatamente como ele fazia antes, redirecionou o usuário para essa listagem e já adicionou o ícone com o link para editar o projeto. Se eu clicar no ícone, repare que ele já me traz para a visualização do formulário. O que está faltando agora é, de alguma forma, receber esse ID no meu formulário e buscar por esse projeto, para eu trazer e carregar o nome naquele input. Então vamos fazer isso.
+
+@@03
+Editando um projeto
+
+[00:00] Vou vir no meu "Formulario.vue" e precisamos definir que esse meu formulário, ele vai receber, de alguma forma, um ID. Como eu gostaria que isso funcionasse? Eu queria receber isso via uma props: {}, porque esse ID, ele está vinculado ao meu componente, à minha visualização, como se ele fosse uma propriedade.
+[00:21] Eu quero que essa propriedade se chame id: {}, que é o ID do projeto, e eu vou dizer que o tipo dessa propriedade é type: String. Então temos uma propriedade que ser chama ID e é do tipo string.
+
+[00:36] Como linkamos agora os segmentos de URL a uma propriedade do nosso formulário? Voltando no roteador, onde definimos os segmentos de URL dinâmicos, vamos dizer que props: true.
+
+[00:55] O que isso diz para o roteador? Que esse segmento :id vai pegar o nome que definimos, o ID, e vai injetar na nossa visualização, como se fosse uma propriedade do componente. Eu salvei, agora teremos acesso a esse ID. No mounted () {}, ou seja, quando esse componente for montado, que é justamente o método mounted que o Vue nos permite implementar, faz parte do ciclo de vida do componente.
+
+[01:24] Então montei esse componente, o que eu vou olhar? Eu vou olhar se eu tenho o ID. if(this.id), ou seja, se eu tenho o ID, o que eu quero fazer? Eu quero tentar localizar um projeto, const projeto =. Vai receber o que? Um = this.store, que eu já tenho disponível aqui, porque já fizemos isso no setup, = this.store.state.projetos.find() para ele encontrar.
+
+[01:51] Eu quero encontrar um projeto cujo ID seja igual ao ID que eu tenho na minha propriedade, (proj => proj.id ==this.id). Como usamos o Typescript, o que vamos fazer? Vamos dizer que o nosso estado local, que é o nome do projeto, então this.nomeDoProjeto = vai receber o projeto o que? = projeto.nome.
+
+[02:20] E se, por algum acaso - repare que o Typescript, ele vai até reclamar aqui, esse projeto possivelmente pode ser undefined, ele pode não existir. O find que você está executando pode não retornar nada. Então nós vamos logo antes do .nome, nós vamos colocar uma interrogação, this.nomeDoProjeto = projeto?.nome.
+
+[02:42] Isso quer dizer que se eu não tiver projeto, ele não vai quebrar, ele não vai tentar pegar nome de undefined. Repare que ele jogou o erro para o outro lado da atribuição, ele vai falar: string ou undefined não é a mesma coisa que string. Como resolvemos isso? Se ele não tiver projeto, vamos colocar aqui um ou uma string vazia, || ' '.
+
+[03:09] Então se ele tiver projeto.nome, ele vai atribuir, senão ele vai colocar uma string vazia ao invés de undefined. Vamos testar para ver se isso tudo funciona. Salvei, voltei para a minha lista de projetos no navegador, vou cadastrar um projeto novo, "Plano de aula", salvei. Vou cadastrar outro projeto, "Vuex - estudando e implementando", salvei. Já trouxe os dois aqui, está bem bacana.
+
+[03:33] Se eu clicar em editar, ele não me trouxe, vamos ver o que aconteceu. Vamos dar uma olhada aqui, projetos, editar, repare, estamos entrando, mas por algum motivo ele não está dando erro no console.
+
+[03:48] E não está nos trazendo o projeto. Vamos dar uma olhada aqui no código. Vamos dar um console.log(projeto) nesse projeto aqui, para ver se ele está, de alguma forma, encontrando esse projeto.
+
+[04:05] Vou atualizar o navegador, vou em "Projetos", vou editar. Ele não está dando o console. Pode ser que ele esteja com o projeto desatualizado. Vamos testar para ver se isso vai resolver. Vou atualizar a página, novo projeto, "Plano de estudo", salvei. Cliquei para editar, agora sim.
+
+[04:23] Estava faltando carregar a página, nós não fizemos nada de errado. Vamos apagar aquele console.log, já vimos que está funcionando. Apaguei no VS Code, voltei para o navegador. Vamos em "Projetos", novo projeto, "Vuex - estudando e implementando". Salvei, cliquei em editar, ele já está identificando que existe um ID, ele vai e busca o projeto, preenche o input.
+
+[04:46] Se vamos em "Projetos > Novo projeto", o novo não cai naquela URL que definimos, que é "/:id", ele não faz nada. Nós já estamos prontos para implementar o método de edição. Vamos para lá, para terminar, fazer e concluir a edição de um projeto. De volta ao VS Code, o que vamos fazer aqui?
+
+[05:07] Quando o usuário mandar salvar, o que vamos fazer? Nós já sabemos que quando o usuário está editando, existe um ID, se não existe, ele está cadastrando. O que vamos fazer, dessa forma? Vamos fazer o if else no methods. Se eu tenho o ID, eu vou fazer uma edição, if (this.id) {}, //EDIÇÃO.
+
+[05:35] Se eu não tenho um ID, ou seja, else {}, eu vou fazer o comit do adiciona projeto. Só que nós ainda não criamos a nossa mutation que altera um projeto, vamos criar ela, vamos para a nossa "store > index.ts", vamos criar mais uma mutation, 'ALTERA_PROJETO'().
+
+[06:03] Essa mutation recebe um state e recebe um projeto inteiro, vamos receber desta vez um projeto inteiro, esse projeto é um (state, projeto: IProjeto) {}. O que queremos fazer com essa edição? Qual é a responsabilidade aqui, nesse método? Ele precisa encontrar o index desse projeto, de alguma forma, ou fazer a requisição para o back-end.
+
+[06:25] No nosso caso, está tudo local, então a primeira coisa que precisamos fazer é encontrar o index, const index = state.projetos.findIndex(). Qual index? Cujo (proj => proj.id == ) ao que eu recebi na minha chamada, == projeto.id).
+
+[06:53] Então eu quero encontrar o index desse projeto. O que vamos fazer por último? state.projetos[], na posição que acabamos de encontrar, [index] = vai receber esse projeto aqui, = projeto. Estamos substituindo o projeto que existia naquela posição por esse novo, alterado.
+
+[07:15] Vamos ver se isso vai funcionar, precisamos chamar agora essa mutação. No nosso "Formulario.vue", se eu tenho o ID, o que eu vou fazer? this.store.comit(' '). Qual é o comit que eu quero fazer? ('ALTERA_PROJETO', {} ), passando o projeto. Então ele precisa passar o ID, que vai vir de id: this.id.
+
+[07:43] Também vai precisar do nome alterado, o nome do projeto será nome: this.nomeDoProjeto, que é a minha variável local do meu estado local. Vamos testar e ver se continua tudo isso funcionando?
+
+[07:58] Salvei, ele já está fazendo o check, se ele vai alterar ou se ele vai adicionar. Vou voltar no navegador, vou atualizar para garantir que está tudo funcionando. Novo projeto, "Plano de estudos". Salvei. Novo projeto, "Vuex - estudando e implementando", salvei, funcionou.
+
+[08:17] Vou editar agora. Cliquei no editar, ele carregou para mim, "Vuex - estudando e implementado na versão 4", é isso o que quero fazer aqui, quero alterar e adicionar essa porção no nome do meu projeto. Se eu mandar salvar, repare que ele já me trouxe a lista atualizada.
+
+[08:35] Ou seja, ele encontrou o index e substituiu o projeto com o projeto novo que eu enviei. Agora já estamos prontos para dar sequência no Alura Tracker, já refatoramos a nossa view de projetos, separamos o formulário da listagem, criamos os links do novo projeto para editar um projeto existente e implementamos a modificação.
+
+[08:55] Estamos prontos agora para evoluir e crescer ainda mais, baseado nas funcionalidades que precisamos trazer para o nosso Alura Tracker. Te vejo na próxima.
+
+@@04
+Rotas aninhadas
+
+[00:00] Legal, a nossa lista de projetos já está funcionando direito, nós conseguimos cadastrar e editar projetos, tudo conforme já imaginávamos. Só que está na hora de tomarmos cuidado com a experiência do desenvolvedor. Essas rotas estão agrupadas, elas estão relacionadas com o mesmo recurso. Nós devemos deixar isso bem explícito, essa correlação entre essas rotas, esse agrupamento.
+[00:23] Então vamos para o nosso código, vamos dar uma olhada no nosso roteador, porque o view router nos permite fazer isso. Voltando para o nosso código, dentro de "roteador" temos o nosso arquivo "index.ts" e aqui temos as três rotas relacionadas ao recurso de projetos e são essas rotas que precisamos agrupar.
+
+[00:44] Como vamos fazer isso? Vou dar um recortar, para colocar essas rotas em memória, e vou criar aqui uma nova entrada. Vou dizer que o caminho, o path continua sendo path: '/projetos',. O componente continua sendo component: Projetos,, nós vamos mexer nele daqui a pouco.
+
+[01:06] Só que agora precisamos dizer que esse componente, essa rota, terão rotas alinhadas, terão rotas filhas. Nós dizemos isso através da propriedade children: []. Essa propriedade, ela espera exatamente o que? Um array, uma lista de rotas internas. Vou colar aqui as rotas.
+
+[01:24] Uma vez que essas rotas são internas a essa, ou seja, elas são filhas, elas vão herdar todo o prefixo, todo o caminho definido na rota pai, então vamos remover das rotas internas. Removido da lista de projetos, do projeto novo e da edição de um projeto.
+
+[01:44] Agora que já estamos parcialmente prontos, vamos começar a refatorar a nossa visualização. Dentro da nossa pasta "views > Projetos", vamos criar uma nova view chamada "Lista.vue". Vamos pegar a nossa tabela inteira, vou dar um "Ctrl + X" e vou trazer ela para "Lista.Vue", porque essa representa a lista de projetos.
+
+[02:11] No projeto em si, o que vamos fazer? Vamos criar o nosso <template>, vamos colocar uma <div>, com a classe de projetos para agrupar <div class="projetos">, e um <h1> com a classe de title, que vem do Bulma, chamada <h1 class="title">Projetos. Vamos agora criar, logo na sequência, o nosso <script> - ele completou demais aqui, vamos apagar essa linha do meio, que não é o que queremos.
+
+[02:41] Nós queremos fazer um import { defineComponent } from 'vue', do próprio Vue, e queremos fazer o export default defineComponent({}), invocando essa função, passando um objeto de configuração. Vamos dizer que o nome desse componente será name: 'Projetos'.
+
+[03:08] Já vamos ajustar o interior para que o nome dele seja name: "Lista", dentro de projetos. E os projetos em si, que estão do lado de fora da pasta. Pronto, já definimos a nossa nova visualização e também já trabalhamos nas rotas alinhadas, então /projetos terá essas três rotas filhas.
+
+[03:33] Vamos salvar e vamos voltar para o código, ver se ele está funcionando do jeito que deveria. No navegador ele já renderizou o projetos, porém ele não renderizou a lista.
+
+[03:43] Repare, tarefas continua funcionando, o projetos está aqui, mas ele não renderiza a lista. Por que isso acontece? Ele de alguma forma identificou que já estamos trabalhando com essas rotas alinhadas, ele renderizou a nossa view base, por assim dizer, só que ele não renderizou as rotas internas, as rotas filhas.
+
+[04:04] Por que ele não fez isso? Dentro da nossa visualização de "Projetos.vue", precisamos indicar para o view router onde ele vai renderizar as rotas filhas. Repare comigo que nós já fizemos isso antes. No nosso "App.vue", nós temos um indicador, dizendo para o view router onde ele vai renderizar as rotas.
+
+[04:25] É a mesma coisa que temos que fazer na nossa view de projetos. Vou copiar o router view, vou trazer ele para "Projetos.vue", vou colocar ele logo abaixo do <h1>. Repare que dentro dessa classe de projetos, aqui na nossa "Lista.vue" e no nosso "Formulario.vue", temos um padding.
+
+[04:44] Isso está se repetindo em todos os componentes. Então vamos dar um "Ctrl + X" para tirar esse estilo do "Formulario.vue", vou tirar também a classe="Projetos". Na nossa "Lista.vue" a mesma coisa, vou tirar a classe="Projetos" e tirar também o padding. Agora sim, vou colar ele na nossa visualização base de projetos.
+
+[05:09] Vamos agora voltar para o nosso navegador e ver se agora isso está funcionando. Vou atualizar a página. Projetos e projetos - olha só, repare, na hora que configuramos as rotas, faltou ajustarmos a rota interna. O componente para a lista de projetos é o componente component: Lista. Vamos fazer o import dele, import Lista from '../views/Projetos/Lista.vue'.
+
+[05:49] Pronto, agora sim, o nosso componente para a rota inicial é o componente de lista. Vou voltar para o nosso navegador, agora sim ele já está funcionando como deveria. Repare que ele está com o título duplicado, porque também temos o título na nossa listagem, vamos tirar ele daqui, vou remover.
+
+[06:09] Vamos voltar para o navegador, agora sim um título só. Vamos criar um projeto novo. Repare que aqui, por algum motivo, ele não entrou na nossa rota de projeto novo. Vamos dar uma olhada, eu acho que já sei o porquê. Aqui, na hora de definir o roteamento, ele não precisa dessa barra.
+
+[06:29] Vou salvar. Ele só terá o segmento relacionado à rota interna, a mais interna. Vamos atualizar o navegador, ver se isso vai funcionar. Exatamente como nós queríamos.
+
+[06:39] Com a exceção desse título duplicado, repare quanta coisa nós tínhamos duplicado, que estamos conseguindo remover agora que já agrupamos esses recursos. Vamos no "Formulario.vue", nós temos esse title, vamos tirar ele fora. Salvei.
+
+[06:55] Vou recarregar a página no navegador, agora sim está tudo funcionando. A listagem de projetos, quando venho aqui, vou cadastrar um projeto novo, "Plano de estudos", por exemplo. Salvei, ele já me redirecionou. Vamos ver se a edição continua funcionando. "Plano de estudos" e vou botar entre parênteses aqui "(vue)". Vou salvar, a edição também continua funcionando.
+
+[07:18] Agora, vamos dar uma recapitulada no que nós fizemos. Começando pelo roteador, nós agrupamos as rotas relacionadas aos projetos, agora temos a lista para trazer a listagem dos projetos, e o formulário que segue cadastrando um novo ou editando um existente. Depois disso, o que nós fizemos?
+
+[07:39] A nossa visualização de projetos, nós demos uma refatorada nela, trouxemos uma classe para fazer aquele padding interno para rota pai e trouxemos o título também de projetos para essa mesma rota, para essa mesma visualização. E aqui dentro, internamente, dentro do template da nossa view base, indicamos um outro router view.
+
+[08:03] Isso quer dizer que todas as rotas filhas desta rota serão renderizadas nesse ponto do HTML. Com isso, agora temos a lista e o formulário funcionando do mesmo jeito que estava funcionando antes, com a exceção de que removemos um pouco de código duplicado e agora eles estão agrupados de forma coesa.
+
+[08:24] Ou seja, todas as rotas relacionadas aos projetos são rotas alinhadas, são rotas filhas. Vamos agora dar uma olhada e ver como conseguimos excluir os projetos para terminarmos o nosso CRUD. Nós já cadastramos, já editamos, está faltando agora remover os projetos. Vamos lá, te vejo na próxima aula.
+
+@@05
+Excluindo projetos e organizando as mutations
+
+Trecho de código usado aos 0:31
+<button class="button ml-2 is-danger">
+    <span class="icon is-small">
+    <i class="fas fa-trash"></i>
+    </span>
+</button>COPIAR CÓDIGO
+[00:00] Nosso CRUD já está quase finalizado. O que está faltando agora é adicionarmos a ação de excluir. Vamos botar a mão na massa, vem comigo, vamos implementar essa exclusão. Vamos abrir o nosso "Projetos > Lista.vue", onde temos a nossa tabela com as iterações que exibem os projetos. Logo aqui, depois do ícone que leva para a página de edição, vamos adicionar um botão com aquele ícone de lixeira, para indicar a exclusão.
+
+[00:29] Então o que eu vou fazer? Vou pegar aqui na minha cola, para facilitar <button class="button ml-2 is-danger"> <span class="icon is-small"> <i class="fas fa-trash"></i> </span> </button>. Vou só ajustar aqui. Repare que estamos usando algumas classes do Bulma com um ícone aqui dentro. Vamos, por enquanto, salvar, ver se ele vai aparecer direito na tela.
+
+[00:45] Salvei. Vou voltar no navegador, vamos atualizar a página. Vamos adicionar um novo projeto, "Plano de estudos". Está aparecendo a lixeira com a ação que vamos implementar agora.
+
+[00:57] Então o que queremos fazer? Quando o usuário clicar nesse ícone, nós vamos fazer um @click="excluir". Quando o usuário clicar nesse ícone, nós vamos chamar esse método excluir.
+
+[01:12] Só que ainda não implementamos ele, vamos implementar agora. Depois do nosso setup. Vamos chamar agora a nossa propriedade methods: {}. Vamos criar um método excluir () {}. Vamos pensar juntos aqui. Esse método precisa excluir algum projeto específico, então precisamos passar algum parâmetro para ele. Vamos fazer isso.
+
+[01:37] No nosso excluir, onde estamos chamando o @click="excluir()", vamos passar justamente o (projeto.id). Agora sim conseguimos saber qual é o projeto que vamos excluir. Agora, no nosso método, recebemos esse excluir (id) {} por parâmetro. Como excluímos isso?
+
+[01:59] Nós já sabemos que o Vuex, a nossa store, é fonte de dados, a fonte de verdade da informação do estado da nossa aplicação, então é através dela. Vamos chamar o this.store- repare, nós ainda não temos a store liberada para uso, porque não retornamos ela no nosso setup.
+
+[02:19] Vamos retornar ela aqui, logo abaixo da lista de projetos, store. Agora sim, this.store.comit(). Qual é a ação que queremos comitar? Queremos comitar uma ação de ('EXCLUIR_PROJETO'). Qual projeto? O projeto cujo ID é esse, ('EXCLUIR_PROJETO', id).
+
+[02:37] É isso o que queremos fazer. Ele já está reclamando, ele está dizendo: “esse ID, ele está implicitamente podendo ser qualquer coisa”. Não é isso o que nós queremos, nós queremos que o ID seja um string, excluir (id: string). Pronto.
+
+[02:51] Agora já estamos prontos para ir para a nossa store implementar essa nossa ação. Vamos abrir a nossa "store > index.ts". Já temos duas mutations aqui, vamos implementar agora a exclusão do projeto. ’EXCLUIR_PROJETO'(). Ele vai receber o state como primeiro parâmetro e o segundo será o ID, que é uma string, (state, id: string), o parâmetro.
+
+[03:15] Agora já podemos pegar e implementar a exclusão. Aqui nós faríamos uma chamada à API, alguma coisa assim. No nosso caso, está tudo em memória, então o que podemos fazer? Podemos usar o método filter do array para remover o projeto cujo ID é esse que nós recebemos.
+
+[03:32] Então podemos dizer que o state.projetos = vai receber o que? = state.projetos.filter(), ou seja, filtre para mim. O que eu quero que você filtre para mim? Os projetos cujo o ID seja diferente do ID que você recebeu, .filter(proj => proj.id != id). Então quando alguém chamar o excluir, vamos filtrar todos os projetos cujo ID seja diferente desse e adicionar o nosso state, vai sobrepor.
+
+[04:05] Com isso nós vamos remover aquele projeto com aquele ID. Vamos salvar agora e ver se esse monte de código que nós fizemos funciona. Voltando para o nosso navegador, vamos atualizar para garantir. Vamos criar um novo projeto, "Plano de estudos". Está ali. Vamos criar agora mais um projeto, "Vuex - estudando e implementado". Agora vamos finalmente testar a nossa ação. Pronto, a exclusão funciona exatamente como nós queríamos.
+
+[04:39] Ela está removendo o ID do nosso array de projetos. Só que, repare, nós já implementamos várias mutations, nós temos as três mutations, as três mutações relacionadas ao projeto.
+
+[04:54] E fizemos isso via string. Se procurarmos aqui, no nosso "Formulario.vue", temos algumas mutations sendo passadas, a ALTERA_PROJETO, a ADICIONA_PROJETO e também na nossa lista agora temos a EXCLUIR_PROJETO, tudo isso em uma string. Se nós, sem querer, digitarmos, ao invés de projeto, fazer um typo, colocar um P ao invés do O, está perto na tecla do teclado.
+
+[05:20] isso vai nos trazer um bug e por um erro bobo, que às vezes é até difícil de debugar e encontrar a raiz do problema. Então, para evitar esse tipo de coisa, o que fazemos? Qual técnica nós utilizamos quando estamos implementando o nosso Vuex? Ao invés de receber essa string da mutação direto, nós criamos os tipos das mutações e exporta isso via constante.
+
+[05:46] Com isso, nós resolvemos esse problema de digitar errado sem querer, ou alguma coisa do tipo. Então vamos lá, vamos copiar esses nomes das mutações de "store > index.ts" e vamos exportar as nossas constantes. Dentro de "store" eu vou criar um arquivo novo, vou chamar ele de "tipo-mutacoes.ts". Vou trazer para cá, vou colar os nomes das mutações.
+
+[06:16] O que eu quero? Para cada uma eu quero fazer o export de uma constante e essa constante terá o mesmo nome.
+
+[06:25] Então agora temos uma constante ADICIONA_PROJETO, uma constante ALTERA_PROJETO e uma constante EXCLUIR_PROJETO. Vou salvar. Agora, como usamos isso? Primeira coisa, vamos na nossa "store > index.ts" e vamos trazer elas para cá. Vamos remover as strings, vamos trazer elas para cá. Vamos remover a última também, trazer para cá. Vamos ver se ele vai importar para nós.
+
+[06:53] Vou clicar aqui - adiciona todos os imports que estão faltando. Cliquei. Perfeito, ele já fez os imports do nosso arquivo "tipo-mutacoes".
+
+[07:03] Nós precisamos fazer a mesma coisa agora para os arquivos que estamos utilizando. Então, no "Formulado.vue", vamos remover essas aspas simples, ele não é mais uma string, ele é uma constante que precisa ser importada. Vamos ver se ele vai nos ajudar aqui, se ele vai trazer o import. Deixa eu ver aqui, se ele nos ajuda. Não ajudou, vamos importar na munheca.
+
+[07:24] O que nós queremos importar? import { ALTERA_PROJETO, ADICIONA_PROJETO } from, nós podemos usar aquele atalho arroba, que é o atalho para o "src", from '@/store/tipos-mutacoes'. Perfeito. Agora, por último, na "Lista.vue", temos que importar e ajustar o 'EXCLUIR_PROJETO’.
+
+[07:53] A mesma coisa, import { EXCLUIR_PROJETO }, entre chaves, from, mais uma vez usando o arroba, que é o "src", from '@/store/tipos-mutacoes'. Agora, ao invés de passar aquela string digitada, estamos passando uma constante. Isso traz uma organização mega bacana para o nosso projeto.
+
+[08:17] E evita aquele possível typo, aquele erro de digitação que pode acontecer e ficaríamos um bom tempo correndo atrás de porquê uma mutação não é comitada ou algo do tipo. E, muito importante, vamos testar se tudo isso que nós fizemos continua funcionando. Vou atualizar a página no navegador.
+
+[08:37] Vou criar um novo projeto, "Plano de estudos", vou salvar. Ele já adicionou aqui para mim. Vamos adicionar mais um, "Vuex - estudando e implementando". Vou salvar, bacana. Vamos testar agora a edição. "Plano de estudos", vamos transformar esse plano de estudos específico para "Plano de estudos (VUE)". Já alterou, então continua funcionando.
+
+[09:01] Podemos agora excluir um projeto, perfeito. Mesmo depois da refatoração, tudo continua funcionando como deveria, agora muito mais organizado, porque temos no nosso arquivo "tipos-mutacoes" todas as constantes e estamos exportando essas constantes justamente para evitar ter que ficar digitando essa string.
+
+[09:21] Agora, quando queremos chamar uma mutação, fazemos um import dela e usa ela direto. Assim evitamos alguns possíveis erros e maximizamos a leitura e a organização do nosso código. Já está tudo indo muito bem, a nossa funcionalidade de projetos já está bem bacana.
+
+[09:44] Está faltando melhorar um pouco agora a experiência do usuário. Que tal se pudéssemos, de alguma forma, notificar ele quando um projeto foi adicionado, quando um projeto foi alterado ou excluído? É isso o que vamos fazer agora. Vem comigo, vamos implementar esse ciclo de notificações e trazer para o usuário um feedback constante das ações que ele está tomando dentro do Alura Tracker. Te vejo na próxima aula.
+
+@@06
+Router view?
+PRÓXIMA ATIVIDADE
+
+Marque a única alternativa correta a respeito de router-view:
+
+É o local no qual realizamos as configurações das rotas da aplicação.
+ 
+As configurações das rotas da aplicação são definidas em um arquivo em separado, um Array<RouteRecordRaw>.
+Alternativa correta
+Serve para indicar para o template da página principal da aplicação o local no qual os demais componentes carregados através de rotas devem ser renderizados.
+ 
+Alternativa correta! Exatamente! Inclusive precisamos de um router-view para cada agrupamento de rotas.
+Alternativa correta
+Tem a mesma finalidade da tag a, permitindo que o usuário clique no elemento da diretiva e vá para outra rota.
+
+@@07
+Para saber mais: Organizando mutations
+PRÓXIMA ATIVIDADE
+
+Organizar mutations em constantes é uma boa prática. E você pode conferir mais detalhes aqui.
+Outro detalhe é que nós declaramos as funções de uma forma um pouco diferente. O nome dessa notação é "nomes de propriedades computados", e a especificação está disponível aqui.
+
+https://next.vuex.vuejs.org/guide/mutations.html#using-constants-for-mutation-types
+
+https://developer.mozilla.org/pt-BR/docs/Web/JavaScript/Reference/Operators/Object_initializer
+
+@@08
+Faça como eu fiz: Desafio - Migrando as tarefas para a store
+PRÓXIMA ATIVIDADE
+
+Nossos projetos se encontram dentro do estado da aplicação, e seria interessante que as tarefas também estivessem lá. Assim, o Vuex será a única fonte de dados do Alura Tracker.
+
+Vamos precisar das 3 mutations e o estado em si. Então, podemos criar e exportar as constantes: ``` // restante do código omitido export const ADICIONA_TAREFA = 'ADICIONA_TAREFA' export const ATUALIZA_TAREFA = 'ATUALIZA_TAREFA' export const REMOVE_TAREFA = 'REMOVE_TAREFA' ``` E a store ficaria: ``` interface State { projetos: IProjeto[], tarefas: ITarefa[], } export const key: InjectionKey> = Symbol() export const store = createStore({ state: { projetos: [], tarefas: [] }, mutations: { // mutations de projeto omitidos [ADICIONA_TAREFA] (state, tarefa: ITarefa) { tarefa.id = new Date().toISOString() state.tarefas.push(tarefa) }, [ATUALIZA_TAREFA](state, tarefa: ITarefa) { const indice = state.tarefas.findIndex(p => p.id == tarefa.id) state.tarefas[indice] = tarefa }, [REMOVE_TAREFA] (state, id: string) { state.tarefas = state.tarefas.filter(p => p.id != id) }, } }) // o campo id na ITarefa export default interface ITarefa { id: string duracaoEmSegundos: number descricao: string projeto?: IProjeto } ```
+
+@@09
+O que aprendemos?
+PRÓXIMA ATIVIDADE
+
+Nessa aula, você aprendeu:
+Manipular o estado;
+Inserimos, editamos, excluímos e listamos os projetos.
+Rotas aninhadas;
+Agrupar rotas dentro de um mesmo contexto.
+Tipos de mutações;
+Extraímos os nomes das mutações para constantes.
