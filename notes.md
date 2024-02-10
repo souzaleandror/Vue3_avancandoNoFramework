@@ -563,7 +563,6 @@ Vimos que o Vue é um framework progressivo e não vem com uma biblioteca de ger
 
 @@01
 Projeto da aula anterior
-PRÓXIMA ATIVIDADE
 
 Caso queira começar daqui, você pode baixar o projeto da aula anterior nesse link.
 
@@ -795,7 +794,6 @@ Trecho de código usado aos 0:31
 
 @@06
 Router view?
-PRÓXIMA ATIVIDADE
 
 Marque a única alternativa correta a respeito de router-view:
 
@@ -811,7 +809,6 @@ Tem a mesma finalidade da tag a, permitindo que o usuário clique no elemento da
 
 @@07
 Para saber mais: Organizando mutations
-PRÓXIMA ATIVIDADE
 
 Organizar mutations em constantes é uma boa prática. E você pode conferir mais detalhes aqui.
 Outro detalhe é que nós declaramos as funções de uma forma um pouco diferente. O nome dessa notação é "nomes de propriedades computados", e a especificação está disponível aqui.
@@ -822,7 +819,6 @@ https://developer.mozilla.org/pt-BR/docs/Web/JavaScript/Reference/Operators/Obje
 
 @@08
 Faça como eu fiz: Desafio - Migrando as tarefas para a store
-PRÓXIMA ATIVIDADE
 
 Nossos projetos se encontram dentro do estado da aplicação, e seria interessante que as tarefas também estivessem lá. Assim, o Vuex será a única fonte de dados do Alura Tracker.
 
@@ -830,7 +826,6 @@ Vamos precisar das 3 mutations e o estado em si. Então, podemos criar e exporta
 
 @@09
 O que aprendemos?
-PRÓXIMA ATIVIDADE
 
 Nessa aula, você aprendeu:
 Manipular o estado;
@@ -839,3 +834,218 @@ Rotas aninhadas;
 Agrupar rotas dentro de um mesmo contexto.
 Tipos de mutações;
 Extraímos os nomes das mutações para constantes.
+
+##### 09/02/2024
+
+@04-Notificando os usuários
+
+@@01
+Projeto da aula anterior
+
+Caso queira começar daqui, você pode baixar o projeto da aula anterior nesse link.
+
+https://github.com/alura-cursos/tracker-2/tree/aula-3
+
+@@02
+Criando o componente
+
+[00:00] Nosso Alura Tracker está incrível, nós já conseguimos manipular os projetos, inserir, editar e excluir. Agora precisamos criar uma camada de comunicação com o usuário. Então, conforme as ações forem tomadas, nós queremos notificar os usuários, aparecer uma mensagem se deu tudo bem, se deu algum tipo de falha na operação. É isso o que vamos implementar agora, uma notificação nossa, do jeito Alura Tracker.
+[00:27] Como estamos usando o Bulma, nós já temos algo que conseguimos aproveitar. Vamos dar uma olhada na documentação do Bulma, nós temos o componente de mensagem. Esse componente de mensagem, ele já tem algum contexto. O que queremos justamente são os três principais quando se fala de notificação.
+
+[00:45] Nós queremos notificar uma informação qualquer, uma mensagem de sucesso, por exemplo, ou um warning, ou mesmo um erro. O HTML com a marcação é justamente esse à direita. É um article com algumas classes, e é isso o que vamos implementar agora. Vamos começar voltando para o nosso projeto.
+
+[01:09] Vamos criar um componente novo e vamos chamar esse componente de "Notificacoes.vue". Nós já sabemos como criar um componente, então criamos o nosso <template>, por enquanto vamos colocar aqui só um <h1>, que é o Notificação. Pronto. Vamos precisar também do <script>, vamos só ajustar esse skaffold aqui.
+
+[01:39] Nós queremos é fazer o import { defineComponent }, nós importamos isso do from 'vue'. Vamos fazer um export default defineComponente({}), que é uma função que recebe um objeto de configuração. Vamos colocar aqui o nome do nosso componente de name: 'Notificacoes'.
+
+[02:06] Nós criamos um componente já bem básico, só com o <h1>. Vamos importar e ver se ele já vai funcionar do jeito que esperamos. Como as notificações são globais, e notificações podem entrar e sair da aplicação a partir de qualquer lugar, nós podemos importar diretamente no "App.vue".
+
+[02:29] Então aqui, vamos adicionar o nosso componente novo, <Notificacoes />. Agora precisamos fazer o import dele, import { Notificacoes } from "./component/Notificacoes.vue". E vamos dizer que ele é um componente, Components: {.
+
+[03:04] Vamos salvar aqui. Agora esperamos que aquele <h1> que criamos na notificação apareça no HTML. Vamos para a nossa aplicação. Pronto.
+
+[03:14] Já exibiu para nós, nós já conseguimos perceber o h1 na nossa aplicação. Mas não é isso o que nós queremos, nós queremos alguma mensagem de contexto, nós queremos indicar algo para o usuário. Vamos começar a implementar de acordo com o que pegamos na documentação do Bulma.
+
+[03:33] Vamos criar para nós uma div, vamos já adicionar uma classe de contexto, aqui ficarão as nossas notificações, <div class="notificacoes">. Nós já vimos no Bulma como é, vamos criar um article, esse article terá uma classe chamada message e vamos começar pelo <article class="message is-success">.
+
+[03:58] Dentro do article teremos uma div que terá uma classe message header, <div class="message-header">. Aqui pode ser um Atenção!, vamos começar aqui o texto estático. Precisamos também de um message body, então <div class="message-body">, Aqui vai um texto de notificação bem bacana..
+
+[04:30] Pronto, vamos pedir para ele formatar o código. Agora sim, está bem bonito. Vamos salvar e vamos confirmar se ele está já agora, aparecendo com o estilo do Bulma. Minimizei o VS Code, voltei para o navegador. Repare, só que ele está pegando o tamanho todo e ele está empurrando o HTML para baixo.
+
+[04:52] Nós precisamos posicionar melhor essa barra de notificações. Vamos agora adicionar um pouco de CSS no "Notificacoes.vue". <style scoped>, ou seja, eu não quero que esse CSS vaze para outros componentes. O que eu quero dizer aqui? Eu quero pegar a minha barra de notificações e eu quero adicionar aqui algum estilo. O que eu quero?
+
+[05:14] Eu quero que seja um posicionamento absoluto, position: absolute;. E eu quero que ele fique em cima, no canto superior direito. Então vamos jogar a notificação para cima e organizar para ficar do tamanho que nós queremos. Para jogarmos ele para a direita nós vamos fazer um right: 0;, estamos com o posicionamento absoluto.
+
+[05:37] Vamos fazer o tamanho do container, vai ser, por exemplo, de 300 pixels, width: 300px;. O que mais? Vamos adicionar um padding interno, padding: 8px;. Vamos salvar e ver se isso já melhora o visual dele. Voltando no navegador, pronto, agora já está bem melhor.
+
+[05:57] Repare que ele já está flutuando aqui em cima do nosso DOM, do nosso HTML, não está mais empurrando o conteúdo para dentro. Vamos adicionar agora as outras notificações. Vamos fazer um "Ctrl + C", "Ctrl + V". Nós queremos notificações de outros tipos. Vamos voltar no Bulma, vamos pegar aqui. Nós teremos um warning e um danger. Vamos ajustar o código, "message is-warning" e um "message is-danger". Vou salvar aqui.
+
+[06:28] Vamos ver no nosso HTML como ficou. Repare, as notificações estão aqui, elas ainda estão um pouco fora de alinhamento, os botões estão ficando na frente. Vamos ver se conseguimos ajustar isso com o z index. Vamos colocar um z-index: 105;, um z-index maior aqui.
+
+[06:48] Voltando para o navegador, agora sim, ele está sobrepondo todo o nosso HTML, inclusive os botões de ação.
+
+[06:56] É isso o que nós queríamos. Nós temos um componente, preparado já para ter tipos de notificações, e ficará flutuando do lado superior direito da nossa tela. Agora, com o nosso HTML já pronto, embora esteja estático, podemos começar a adicionar os comportamentos.
+
+[07:15] Ou seja, queremos dinamicamente adicionar essas notificações, conforme o usuário interaja com o Tracker. Vamos agora, na próxima aula, implementar isso de forma dinâmica. Nós precisamos ter alguma forma que dada uma ação que o usuário executou, por exemplo, adicionar um projeto, editar um projeto ou finalizar uma tarefa, nós vamos subir uma notificação para ele. Vem comigo, vamos implementar isso na próxima aula.
+
+@@03
+Notificando via store
+
+[00:00] As nossas notificações já estão bem bacanas, parecendo contextualizadas no canto superior direito, que é o que nós queríamos. Só que elas estão estáticas, nós precisamos trazer dinamismo agora, porque o Tracker, ele é dinâmico, nós queremos notificar e remover notificações de forma dinâmica também.
+[00:18] Vamos para o nosso código. Quando temos uma propriedade, um estado que ele é global na aplicação, estamos colocando na nossa "store". É isso o que vamos fazer. No nosso estado, além de termos o nosso array de projetos, também teremos um array de notificações, notificacoes:.
+
+[00:39] Só que qual é o tipo de notificação? Que tipo é esse? Vamos implementar, porque ainda não temos essa interface. Dentro da nossa pasta "src > interfaces", novo arquivo, "INotificacao.ts". Aqui precisamos exportar a nossa interface, então export interface INotificacao {}. Ela terá um título, por exemplo, que será um titulo: string.
+
+[01:17] Ela também terá um texto, que também é um texto: string. Ela terá um tipo:, que ainda não sabemos qual será, e ela também terá um id:, que também não sabemos qual será. Vamos começar aqui, vamos começar pelo tipo. Vamos fazer um export. Como são tipos específicos que nós esperamos, podemos usar um export enum TipoNotificacao {}.
+
+[01:53] Quais são os tipos que nós temos? SUCESSO,, FALHA, e ATENCAO. Agora podemos dizer que o tipo será o tipo: TipoNotificacao. O ID nós podemos colocar um ID numérico e incremental, utilizar um número, 1, 2, 3, 4, id: number.
+
+[02:19] Agora conseguimos voltar na nossa "store" e fazer essa inferência de tipo de notificação. Vou colar, ele fez um import para nós, de INotificacao. Esse cara é um array, notificacoes: INotificacao[]. Então vou adicionar aqui um notificacoes: [{}]
+
+[02:36] Ele vai começar com um array, vamos adicionar aqui algumas notificações, só vou pedir para ele fazer o format para mim. Pronto, a informação nós já vimos que tem um id: 1,, já sabemos que tem um texto - vamos começar aqui, texto: uma notificação de sucesso, vamos começar pelo verde, o sucesso.
+
+[02:58] O título podemos também dizer que é titulo: 'sucesso',. E, por último, falta só o tipo, que será o tipo: TipoNotificacao., repare que ele já fez o auto import para nós. Mas o tipo dessa notificação é TipoNotificacao.SUCESSO. Vamos fazer um "Ctrl + C", "Ctrl + V" aqui.
+
+[03:18] Vamos colocar umas vírgulas aqui para separar. ID 1, o próximo agora é id: 2, e o outro é id: 3,. Nós queremos o de TipoNotificacao.ATENCAO, um TipoNotificacao.FALHA. Vamos ajustar o texto, atencao e no outro falha.
+
+[03:39] Já estamos iniciando o nosso estado com essas notificações. Agora o que precisamos fazer é pegar do outro lado. Vamos para o nosso componente "Notificacoes.vue". Aqui, já sabemos o que precisamos fazer para ter os dados da store disponíveis. Vamos implementar o nosso método de setup () {}.
+
+[03:58] Nós já sabemos como pegar a store, cont store = vai receber aquele hook que nós criamos, o = useStore. Repare que aqui não é o que queremos, esse é do Vuex, esse é aquele que temos que passar a chave, não é esse que nós queremos. Nós queremos o nosso que está disponível na store, import { useStore } from "@/store";.
+
+[04:14] Agora sim. Vamos fazer o return {}. O que vamos retornar aqui? notificacoes:. O que é o “notificações”? Nós já sabemos como fazer para observar e ficar reagindo ao incremento, conforme as notificações entram e saem, que é chamar o state dentro da função computed, : computed().
+
+[04:40] Ele vai fazer o import para nós. Esse cara, ele recebe uma arrow function, uma função, de parâmetro. O que queremos retornar aqui é o (() => store.state.notificacoes). Agora, ao invés de fazer isso tudo na mão, o que queremos é para v-for=, para cada ="notificacao in notificacoes" - ele já está reclamando porque ele espera uma chave.
+
+[05:12] Então vamos adicionar aqui a chave, que será a :key="notificacao.id". Vou pedir para ele formatar o código. Formatado. Agora o título, ele não é mais fixo, ele virá da notificação, { notificacao.titulo }. Agpra, ele também virá do texto, não é mais estático, ele vai vir da notificação, notificacao.texto.
+
+[05:45] Vamos salvar e ver se isso está funcionando. Minimizando o VS Code, pronto, uma notificação de sucesso, atenção e falha. Ele está funcionando até, ele está repetindo as três notificações, mas ele não está reagindo ao contexto. Nós queremos que o “Atenção” fique naquele tom de laranja e a falha fique naquele tom de vermelho. O que podemos fazer no código? No Bulma, o que diz qual é o contexto da mensagem é essa classe adicional.
+
+[06:15] Nós temos o is success, o warning e danger. Ao invés de fazer isso estático, direto, nós precisamos receber isso de alguma forma. Nós podemos fazer o bind com a classe, :class=, e de alguma forma precisamos alterar esse valor, dado o contexto.
+
+[06:33] Existem várias formas que podemos usar para fazer isso, mas uma forma que é bem bacana e fácil de entender, é implementar um objeto que passarmos o tipo para ele e ele retorna a classe. Então vamos criar aqui a nossa função data(){}, para retornar o estado local. A função data vai retornar um objeto, return {}.
+
+[06:55] Esse objeto que queremos retornar é o contexto: { [] }, ou seja, ele pode ser qualquer um daqueles três tipos. Como faremos para implementar esse contexto? Nós podemos, para cada tipo de notificação, criar uma propriedade. Então vamos aqui, [TipoNotificacao], repare que ele já fez o import para nós.
+
+[07:14] [TipoNotificacao.SUCESSO]:. Nesse cenário, nós sabemos que é o : 'is-success',. Vamos fazer um "Ctrl + C", "Ctrl + V" aqui para aproveitar. Além do sucesso nós temos o [TipoNotificacao.ATENCAO]: e o [TipoNotificacao.FALHA]:. O “atenção”, a classe é o : 'is-warning', e, por último aqui, o vermelho é o : 'is-danger',. Pronto.
+
+[07:40] Agora, o que precisamos fazer é acessar esse contexto, que acabamos de criar, na posição :class="contexto[notificacao.tipo]". Para cada tipo vamos acessar esse contexto e o contexto vai retornar a classe que esperamos. Vamos salvar e ver se isso vai funcionar. Voltando para a aplicação. Agora sim, exatamente como nós queríamos.
+
+[08:08] As notificações de sucesso verdes, a de atenção nesse tom meio amarelo, meio alaranjado, e a de falha nesse tom meio avermelhado, meio que indicando que alguma coisa deu errado. Então, sim, agora as notificações já estão dinâmicas, vindas da store.
+
+[08:27] Se adicionarmos na "store > index.ts" mais uma notificação - vamos fazer um "Ctrl + C", "Ctrl + V". id: 4,, vamos chamar de sucess aqui, porque queremos mais sucesso do que falha, o tipo será sucess. Vamos salvar. Se voltarmos ao nosso navegador, ele já exibe a notificação de sucesso.
+
+[08:45] Nós já estamos quase lá, nós já migramos as nossas notificações para a store, o que precisamos fazer agora é adicionar e remover elas de forma dinâmica também, ao invés de criar esse estado aqui, com essas notificações iniciais.
+
+[09:00] Nós não queremos isso, queremos que elas entrem e saiam da nossa store de forma dinâmica. Vamos fazer isso na próxima aula, e vamos escolher em qual momento vamos notificar o usuário. Vamos lá, te espero no próximo vídeo.
+
+@@04
+Actions ou mutations?
+
+Temos utilizado as mutations e as actions sem problemas até agora. Mas, conceitualmente, existe uma diferença entre elas. Qual é?
+
+As actions podem alterar o estado, e as mutations não.
+ 
+Alternativa correta
+Mutations não podem ser chamadas diretamente do componente.
+ 
+Alternativa correta
+Actions podem ser síncronas ou assíncronas. Mutations precisam, obrigatoriamente, serem síncronas.
+ 
+Alternativa correta! Exatamente! Seguindo a documentação do vuex, fica bem claro quando devemos usar qual.
+
+@@05
+Removendo automaticamente
+
+[00:00] Bacana, estamos quase lá, as nossas notificações já estão na nossa fonte de dados, na nossa fonte de verdade, agora é só adicionar e remover de forma dinâmica. Nós já sabemos fazer isso, porque nós já fizemos todo esse processo com o nosso recurso de projetos. Então vamos para o nosso código.
+[00:19] Vamos dar uma olhada na nossa store, nós temos as notificações, que já iniciamos com algumas. Vamos limpar isso e deixar uma lista vazia. Se salvarmos e voltarmos para a página do navegador, repare que as notificações já sumiram.
+
+[00:33] O que precisamos fazer é adicionar uma mutação para adicionar a notificação. Vamos nos nossos "tipo-mutacoes.ts", vamos adicionar uma mutation nova, export const NOTIFICAR = 'NOTIFICAR', que será o nome da nossa mutation. Vamos dar um "Ctrl + C" aqui, no nome da mutation e vamos implementar ela já na nossa store, na nossa propriedade de mutations.
+
+[01:01] Já chamamos o [NOTIFICAR] aqui, o VS Code já vai nos sugerir a importação. Aproveitando que estamos mexendo na importação, já podemos remover esse import TipoNotificacao, que não é mais necessário, não estamos mais criando notificação na mão. E, no [NOTIFICAR](), vamos receber aqui o state como parâmetro e a nova notificação, que é do tipo (state, novaNotificacao: INotificacao) {}.
+
+[01:33] Agora podemos implementar essa inserção, inserir esse dado aqui. O que podemos fazer aqui, logo na largada, é adicionar um ID para essa nova notificação, novaNotificacao.id =. Nós podemos continuar usando o objeto new date - faltou a atribuição aqui, = new Date().
+
+[01:55] E podemos chamar um método chamado = new Date().getTime(). Ele vai retornar o número relacionado aos microssegundos, assim conseguimos identificar de forma bem única essa notificação. Além disso, precisamos, de fato, inserir essa nova notificação no nosso estado, state.projetos.push(novaNotificacao).
+
+[02:23] Vamos ver o que ele está reclamando. Não é projetos, é state.notificacoes.push(novaNotificacao), agora sim. Vamos testar e vamos ver se já conseguimos notificar alguma coisa.
+
+[02:37] Vamos para o nosso formulário de projetos, temos aqui o método de salvar. Logo após salvar nós podemos chamar a store, que já está disponível aqui, nós já preparamos isso no nosso setup, this.store.comit(). Queremos adicionar a mutação aqui, (NOTIFICAR, {}). Repare que ele já fez o import para nós, ele sugere e importa.
+
+[03:00] E aqui nós passamos a notificação. O que temos que passar aqui é o título, que será um titulo: 'Novo projeto adicionado’ - vamos botar salvo. Foi salvo, vamos botar assim titulo: 'Novo projeto foi salvo'. Agora o texto da notificação, o texto vai ser texto: 'Prontinho ;) seu projeto já está disponível.'. Faltou o tipo, não é?
+
+[03:33] Vamos adicionar o tipo também, o tipo será o tipo: TipoNotificacao, repare, o VS Code, sempre o nosso melhor amigo, já vai sugerir o auto import, TipoNotificacao.SUCESSO. Se ele não te sugerir, você pode fazer um import do tipo de notificação aqui, de forma manual.
+
+[03:52] Então já estamos fazendo o comit da nossa notificação. Vamos salvar e vamos ver se isso vai funcionar conforme esperamos. Vamos para o navegador, vamos adicionar um novo projeto, "Plano de estudo", salvar.
+
+[04:06] E ele adicionou a nossa notificação, "o novo projeto foi salvo", "prontinho ;) o seu projeto já está disponível.". Já adicionamos, mas faltou remover, nós precisamos remover essa notificação. O que podemos usar, em termos de JavaScript, de coisas prontas, para fazer isso?
+
+[04:25] Voltando na nossa store, nós podemos fazer o uso do setTimeOut(). O que o set time out vai fazer? Nós vamos passar uma função para ele e, como segundo parâmetro, uma quantidade em milissegundos. Depois que passar esse tempo que nós definimos, ele vai executar o que passamos como primeiro parâmetro.
+
+[04:49] Então setTimeOut(() => {}, 3000), a função que queremos executar e, por último, em segundo, o número em milissegundos. Eu quero 3 segundos, acho que 3 segundos é um bom tempo para lermos aquela notificação. Depois de três segundos nós queremos fazer algo. O que queremos fazer?
+
+[05:06] O que queremos é justamente filtrar as nossas notificações do mesmo jeito que fizemos com os projetos. Então vamos em state.notificacoes = state.notificacoes.filter(). O que queremos filtrar aqui? A notificação cujo ID é diferente da - vamos só chegar aqui, diminuir o menu para ficar mais espaço na nossa tela.
+
+[05:40] Cujo ID é diferente desse ID que nós acabamos de criar, que está na nova notificação, (notificacao => notificacao.id != novaNotificacao.id). Recapitulando aqui, o que nós fizemos? Deixa eu ver o que ele está reclamando aqui, tem um colchete sobrando. Agora sim.
+
+[05:58] Recapitulando, o que nós fizemos? Adicionamos um ID, que é o tempo em milissegundos decorridos, que ele consegue pegar certo, um bom número para identificar a notificação. Nós adicionamos notificação na nossa lista e, depois de 3 segundos, nós filtramos, removendo a notificação que acabamos de adicionar.
+
+[06:21] Vamos salvar aqui, voltar e testar para ver se isso funciona. Ele já recarregou a página do navegador para nós, repare que ele já limpou, o nosso projeto não existe mais aqui, e nem a notificação. O que queremos aqui é adicionar "Plano de estudos", vamos botar para salvar.
+
+[06:37] Depois de alguns segundos, bacana, removeu. Então é exatamente isso o que queríamos. Nós fazemos a notificação e depois de 3 segundos ela é removida do estado. Agora tudo funciona exatamente como nós queríamos, salvando um projeto novo, ele exibe a notificação, dá uma mensagem amigável para o usuário e, depois de algum tempo, a mensagem desaparece, de forma bem dinâmica, assim como todo o Alura Tracker é.
+
+[07:04] Ele funciona, ele é vivo e as notificações agora também. Nós poderemos nos comunicar com o usuário em determinadas situações, quando ele, por exemplo, remover ou adicionar algum recurso na aplicação. Mas nós ainda conseguimos melhorar a experiência, contudo, dessa vez para o desenvolvedor. Vamos dar uma olhada e ver outras formas de implementar essa notificação, além do uso da store. Eu vejo você na próxima aula.
+
+@@06
+Para saber mais: Vue DevTools
+
+Aqui você consegue visualizar a aula onde instalamos o VueDevTools. Ela é uma extensão bem bacana que ajuda a depurar o estado da nossa aplicação.
+
+https://cursos.alura.com.br/course/vue3-comecando-framework/task/97506
+
+@@07
+Desafio: Validando as tarefas
+
+Que tal adicionar uma validação na hora de finalizar uma tarefa? Vamos subir uma notificação de erro caso o usuário tente finalizar uma tarefa que não possui um projeto vinculado.
+
+Podemos alterar o método que salva a notificação para verificar se o projeto existe:
+{
+    // restante do código omitido...
+    methods: {
+        salvarTarefa(tempoEmSegundos: number): void {
+            const projeto = this.projetos.find((p) => p.id == this.idProjeto); // primeiro, buscamos pelo projeto
+            if(!projeto) { // se o projeto não existe...
+                this.store.commit(NOTIFICAR, {
+                    titulo: 'Ops!',
+                    texto: "Selecione um projeto antes de finalizar a tarefa!",
+                    tipo: TipoNotificacao.ERRO,
+                }); // notificamos o usuário
+                return; // ao fazer return aqui, o restante do método salvarTarefa não será executado. chamamos essa técnica de early return :)
+            }
+            // se o projeto existe, seguimos normalmente...
+            this.$emit('aoSalvarTarefa', {
+                duracaoEmSegundos: tempoEmSegundos,
+                descricao: this.descricao,
+                projeto: projeto
+            })
+            this.descricao = ''
+        }
+    },
+    // restante do código omitido...
+}COPIAR CÓDIGO
+Ao fazermos esse return antecipado, garantimos que o restante do método não será executado. Essa técnica é conhecida como early return.
+
+@@08
+Faça como eu fiz
+
+Chegou a hora de você seguir todos os passos realizados por mim durante esta aula. Caso já tenha feito, excelente. Se ainda não, é importante que você execute o que foi visto nos vídeos para poder continuar com a próxima aula.
+
+Continue com os seus estudos, e se houver dúvidas, não hesite em recorrer ao nosso fórum!
+
+@@09
+O que aprendemos?
+
+Nessa aula, você aprendeu:
+Controlar o estado;
+Desenvolvendo a lista de notificações.
+Combinar o Vue e o Bulma;
+Utilizando componentes visuais prontos do Bulma e cuidado do comportamento utilizando o Vue.
