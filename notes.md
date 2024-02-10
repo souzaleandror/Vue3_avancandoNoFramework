@@ -1049,3 +1049,191 @@ Controlar o estado;
 Desenvolvendo a lista de notificações.
 Combinar o Vue e o Bulma;
 Utilizando componentes visuais prontos do Bulma e cuidado do comportamento utilizando o Vue.
+
+#### 10/02/2024
+
+@05-Compilando a aplicação
+
+@@01
+Projeto da aula anterior
+
+Caso queira começar daqui, você pode baixar o projeto da aula anterior nesse link.
+
+https://github.com/alura-cursos/tracker-2/tree/aula-4
+
+@@02
+Notificando com Mixins
+
+[00:00] Nós já conseguimos notificar para o usuário as ações que ele executou ou então quando vamos aqui, cadastramos um projeto novo - vou cadastrar aqui o meu "Plano de estudos" mais uma vez.
+[00:11] Ele já faz a notificação, já some a notificação com o passar do tempo. Mas a nossa implementação, ela está um pouco acoplada demais com a nossa store. Voltando para o nosso código, no método onde fazemos o comit da notificação, nós teremos que estar sempre com a store injetada no componente.
+
+[00:31] Então não necessariamente um componente, que vai notificado, ele já terá o setup da store. Está muito acoplado, desse jeito fica um pouco inflexível se precisarmos fazer alguma alteração. Quando formos passar o comit da notificação para outros componentes terá esse copy e paste para lá e para cá. O ideal seria que tivéssemos um método notificar e eu pudesse chamar esse método de notificar aonde quer que eu precisasse dele.
+
+[01:01] Que eu fizesse a devida importação e notificasse através de um método específico de notificação ao invés de fazermos comit na store. É isso o que vamos fazer agora, nós vamos utilizar um mixins. A ideia do mixin no Vue é justamente reaproveitar código, seja ele qual porção do componente que seja uma parte de estado do dado, métodos, computed properties, podemos reaproveitar qualquer porção do nosso componente.
+
+[01:34] E o que queremos reaproveitar aqui é o método notificar. Então vamos fazer isso. A primeira coisa que vamos fazer é extrair a função de notificar para um método. Então ao invés de fazermos esse comit, vamos criar aqui rapidamente um outro método, dentro do nosso "Formulario.vue". Vamos chamar esse método de notificar () {};.
+
+[02:02] Vamos trazer o comit do notificar para cá - agora sim. O nosso método agora que tem essa responsabilidade. E, ao invés de termos esses dados fixos, nós queremos receber um notificar (tipo: TipoNotificacao, ), que ele é justamente um tipo de notificação. Vamos receber um título e vamos receber um texto, (tipo: TipoNotificacao, titulo, texto).
+
+[02:30] Agora podemos remover daqui e remover esse valor, essa parte também. Vamos agora só adicionar os tipos, o título é uma string e o texto também é uma string, titulo: string, texto: string. Agora, quando quisermos notificar, podemos vir aqui e chamar o nosso método, this.notificar().
+
+[02:58] Vamos passar o tipo, repare que faltou usarmos o tipo que recebemos como parâmetro aqui, agora sim, estamos notificando esse título, que recebemos de parâmetro, o texto e o tipo.
+
+[03:13] Vamos agora chamar esse método. A notificação de sucesso, o título podemos usar, por exemplo, excelente, e por último a mensagem: o projeto foi cadastrado com sucesso. Pronto. Já refatoramos e extrairmos para um método. Vamos ver se essa refatoração está ok, se continuamos notificando como deveríamos.
+
+[03:45] Vamos para a nossa aplicação, cadastrar um novo projeto. Vou cadastrar o "Vuex - estudando e implementado", vou mandar salvar. Ótimo, ele já continua fazendo a notificação e já com os dados novos.
+
+[04:02] Agora, o que queremos fazer? Queremos reaproveitar esse notificar para usar ele em outros componentes. É exatamente aqui que entra o mixin. Vamos lá, para a nossa estrutura de pasta. Aqui eu vou criar um novo arquivo, eu vou criar uma pasta chamada "Mixins" primeiro. Aqui dentro, eu vou criar um "notificar.ts", que é o mixin de notificação. Vamos ajustar aqui o erro de digitação, pronto.
+
+[04:30] O que nós vamos fazer? Basicamente o que temos que fazer aqui é muito simples, vamos fazer um export da função que queremos, do jeito que queremos, então podemos botar export const notificacaoMixin = {}. Esse cara, ele vai ser um objeto literal que corresponde com as propriedades que passamos para o nosso método define component, que é o que fazemos a importação do Vue.
+
+[05:00] Então o que queremos aqui? É uma propriedade chamada methods: {}. Qual é o método que queremos reaproveitar? O notificar. Então vamos tirar do "Formulario.vue", nós já refatoramos ele. Removemos o código do formulário e trazemos ele para o "notificar.ts" e formatar o documento para mim.
+
+[05:20] Ele está reclamando de alguns problemas de lynching. A primeira coisa, ele está dizendo que eu não tenho o tipo do meu retorno, então eu vou dizer aqui, explicitamente, que essa notificação, esse método não vai retornar nada. Podemos tirar aqui esse this, que ele não vai existir e fazer os imports necessários.
+
+[05:46] Vamos começar aqui, importando o tipo da notificação, a nossa mutação de modificar e a store, aqui tem um pequeno detalhe, não vamos usar aqui através do hook, porque aquele hook precisa ser utilizado dentro de um componente, por um componente. Então, nesse cenário em que queremos ter acesso ao store, mas fora de um componente, podemos fazer o import direto.
+
+[06:10] Então import { store } from e vamos lá, usando o arroba, from '@/store'. Se olharmos aqui, repare comigo que, desde o começo, já estamos exportando essa constante para ser utilizada por quem precisar. Agora sim, temos o nosso mixin sem erros de compilação.
+
+[06:37] Podemos salvar. Vamos arrumar esse typo aqui, é mixin, eu tinha digitado errado, agora sim, notificacaoMixin. E, por último, precisamos implementar ele, deixar ele disponível no nosso componente. Como fazemos isso?
+
+[06:53] Nós voltamos no "Fomulario.vue" e aqui, além de definirmos tudo o que já definíamos, nós vamos definir os mixins. Ele é uma lista, porque podemos utilizar vários mixings, mixins: []. O que queremos aqui é o [notificacaoMixin], é isso? Vamos confirmar o nome que nós fizemos, notificacaoMixin, é isso aí.
+
+[07:19] Vamos ver se ele vai fazer o import para nós, não fez. Vamos fazer na mão, import { notificacaoMixin } from, vamos usar o arroba, que é o atalho para o "src", from '@/mixins', repare que eu tenho mais um erro de digitação, hoje está difícil, vamos lá, mixins, agora sim.
+
+[07:39] from '@/mixins/notificar'. Pronto, agora sim. Se olharmos agora, o erro de compilação que tínhamos antes, vamos tirar essa configuração mixing: [notificacaoMixin] para darmos uma olhada. Ele já está dizendo aqui, essa propriedade notificar não existe aqui, eu não sei de onde ela está vindo. Ele já está nos avisando que isso vai dar erro.
+
+[08:03] Quando vamos e configuramos o mixin, ele já entende que esse método existe e os parâmetros estão certos, podemos agora inclusive remover a importação da mutação de notificar, que fazíamos antes. Então salvamos tudo aqui, já extraímos para o mixin. Vamos testar e ver se isso continua funcionando.
+
+[08:26] Vamos dar uma carregada na página, para ter certeza que está tudo fresco, e vamos cadastrar o "Plano de estudo" mais uma vez. Continua funcionando. Vamos mudar o tipo de notificação, para ver se isso está bem bacana. Vou mudar agora para TipoNotificacao.ATENCAO.
+
+[08:42] Vamos voltar no navegador, recarregar a página para ter certeza, só para garantir, "Plano de estudos (VUE)", vamos mandar salvar.
+
+[08:52] É muito simples alterar o tipo. Agora ele está desacoplado da store. Quem quiser notificar não precisa mais conhecer a store e conhecer o tipo da mutação, não precisa. O que ele precisa conhecer agora é qual é a notificação que ele quer fazer e se ela é sucesso, atenção ou falha.
+
+[09:15] Está bem mais desacoplado, está bem mais enxuto o nosso método de notificar. A ideia do mixin é justamente essa, é trazer reutilização de código. Mas nem tudo são flores, nós podemos ter problemas usando o mixin dependendo do que estamos fazendo. Nós temos que usar com bastante cuidado porque nós, imagine se em algum cenário onde além do mixin eu tenho outro componente que também tem um método modificar.
+
+[09:45] Imagine, teremos que pensar em um view ou nós mesmo temos que pensar em tratar colisão de nome de método ou de nome de property. Então é muito bacana para reutilizar código, mas tem que ser utilizado com bastante cuidado, com bastante parcimônia e existem algumas alternativas.
+
+[10:05] Para esse cenário de notificar ele funcionaria bem, mas temos outras formas de reaproveitar esse código. É isso o que vamos ver no próximo vídeo. Te vejo lá.
+
+@@03
+Hooks e Composition API
+
+[00:00] Bacana, o nosso mixin já está funcionando, nós já conseguimos notificar através dele, estamos reutilizando código agora, o nosso notificar em si, ele está totalmente desacoplado da store, ele está transparente para quem está utilizando. Então se vamos usar o store por baixo dos panos, ou se vamos usar outra forma para controlar as notificações, nós estamos isolados e desacoplados.
+[00:27] Agora está bem mais elegante e mais coeso o nosso notificador. Mas o mixin, ele pode trazer alguns tipos de problema, principalmente colisão de nome e não necessariamente ele será a melhor forma de reutilizar código. Para esse caso atende, mas não necessariamente para outros casos ele vai atender.
+
+[00:46] É por isso que vamos aprender agora, outra forma de compartilhar código, que é através de hooks customizados. Como vamos fazer isso? Vamos para o nosso código. O que vamos fazer aqui? Vamos criar esse hook, a nossa função que será utilizada. Nós temos um exemplo aqui, da useStore, que só encapsulamos o hook do próprio Vuex.
+
+[01:11] O que vamos fazer aqui, agora, é criar o nosso próprio. Dentro de "src", vamos criar um novo arquivo, vamos criar uma pasta aqui primeiro, vamos chamar ela de "hooks". O que eu quero criar aqui, o hook que eu quero criar, é o do notificador, então "notificador.ts". Pronto, criamos o nosso arquivo. Como criamos esse hook?
+
+[01:33] A primeira coisa que vamos fazer é explicitar o que vamos exportar aqui. Vamos criar aqui um tipo, o nosso tipo será o type Notificador = {}. Ele será um objeto que terá a função de notificar. O que nós recebemos, por parâmetro, e o que ela faz, o que essa função faz? Vamos lá, a notificar, ela é uma função, que ela vai receber um tipo.
+
+[02:03] O tipo é o tipo de notificação. Repare que o VS Code, meu melhor amigo, já importou para mim. Além do tipo, ela vai receber o título, que é uma string e o texto, que também é uma string. O que essa função retorna? Nada, ela é uma função que é void, ela não retorna nenhum objeto, não retornar nada, notificar (tipo: TipoNotificacao, titulo: string, texto: string) => void. O que ela faz é a notificação, apenas.
+
+[02:28] Agora, que já sabemos o que vamos fazer, vamos exportar a função. Então vamos fazer um export default. O que vamos exportar aqui? É uma função, que retorna um notificador, vamos implementar. O que é o nosso notificar? export default () ; Notificador => {}. O nosso notificar, nós já sabemos o que é, vamos pegar do nosso mixin, vou trazer para o "notificador".
+
+[03:03] Vamos ajustar aqui e botar aqui um sinal de atribuição. Pronto. O nosso notificar, ele vai implementar essa função que acabamos de explicitar aqui. Repare que ele está reclamando só do import da store, então vamos fazer ele aqui, import { store } from '@/store'. Ele já está dando um erro de compilação aqui, que não estamos retornando o que deveríamos, e ele está reclamando aqui também do tipo da mutação.
+
+[03:36] Vamos implementar aqui o tipo da notificação. Agora nós podemos retornar o objeto que vai fazer a nossa notificação, return {}, notificar. Agora ele passou os erros, ele está compilando direito. Nós trouxemos a função do notificar igual ela estava no nosso mixin, mas agora ela está contida no nosso hook.
+
+[03:58] Agora precisamos preparar o nosso formulário para usar esse hook ao invés do mixin. Como fazemos isso? Vamos para o nosso código, já vamos tirar o mixin do "Formulario.vue", eu não quero mais esse mixin. Eu também não quero fazer esse import do mixing. O que eu quero agora é, no meu setup, é aqui que fazemos essa configuração.
+
+[04:18] O que nós queremos é ter o nosso método de notificar, já vamos dash token aqui, para pegar só o que precisamos, const { notificar } =. De onde ele vai vir? Do nosso =useNotificador. É isso o que precisamos fazer.
+
+[04:39] Vamos só fazer o import, que ele não encontrou, precisamos importar na mão, o Visual Studio dessa vez não foi o nosso melhor amigo aqui. Então vamos lá, import { useNotificador } from, vamos usar o nosso atalho, from '@/hooks/notificador'. Agora sim. Vamos ver o que ele está reclamando aqui.
+
+[05:10] Nós já estamos fazendo o export default, então não precisamos envolver esse import aqui, podemos importar direto o useNotificador. Agora sim o import está certo. Agora só precisamos adicionar no nosso retorno, notificar.
+
+[05:27] Repare que automaticamente o erro de compilação vai sair, porque esse notificar vem do setup, o Visual Studio Code já entendeu o que estamos fazendo aqui. Agora a nossa função virou um hook, ela não é mais um mixing, e aqui podemos reaproveitar à vontade, em qualquer componente, utilizando do mesmo jeito. Vamos garantir que isso está funcionando?
+
+[05:50] Eu vou voltar o tipo da notificação para TipoNotificacao.SUCESSO e vamos testar no navegador. Vou recarregar a página para garantir. Novo projeto, "Plano de estudos", vamos mandar salvar. Pronto.
+
+[06:03] Excelente, o projeto foi cadastrado com sucesso e o nosso hook funciona exatamente como deveria. Nós estamos reaproveitando o código de uma forma diferente e agora com o seu cinto de utilidades, de ferramentas, cada vez maior. De acordo com a necessidade dos projetos, nós podemos escolher quando é um cenário ideal para um mixin ou quando talvez não seja o melhor cenário, podemos utilizar um hook customizado.
+
+[06:30] E assim conseguimos reaproveitar o código à vontade e parar de nos repetirmos. Com bastante elegância vamos adquirindo e implementando boas práticas nas nossas aplicações Vue.
+
+@@04
+Para saber mais: Setup
+
+Utilizamos em vários componentes a composition api, e aqui neste artigo você pode entender ainda mais as vantagens e quais os problemas ela veio resolver!
+
+https://www.alura.com.br/artigos/vue-3-conhecendo-mais-de-perto?_gl=1*j9jcj6*_ga*MTgwMzIzMjk2Ni4xNjg4ODE5OTcz*_ga_1EPWSW3PCS*MTcwNzU5NDg3My4xOTMuMS4xNzA3NjAxMDA3LjAuMC4w*_fplc*Vlpzcjl6JTJCUW84bFRla3dsJTJGJTJCdEFQNHdRc05BdG9rUiUyRnk1NENxallFUXFCU3Z5czFlZzFxQ1FJOU5RejFPVCUyRkVxWk8zTzA3R2NUZHBmcFdRNjNpMVZtR1klMkYwOG9XeHc0JTJCNEozZDFGb29zRW5HZUpDQWpMeVRpV1JuQTM2TWclM0QlM0Q.
+
+@@05
+Computed props mais a fundo
+
+[00:00] Nosso Alura Tracker já está mega bacana, nós já trouxemos toda essa parte de projetos e conceito do recurso de projetos. Então podemos vir na página e cadastrar o nosso famoso "Plano de estudos", vou cadastrar mais um aqui, que é o "Vuex - estudando e implementando". Vou cadastrar mais um aqui, que é o "Plano de estudos" aqui eu não vou colocar "(VUE)", eu vou colocar "(TS)".
+[00:27] Pronto, temos os nossos três projetos, temos um plano de estudos genérico, temos um do Vuex e temos o plano de estudos de Typescript. Agora, na hora de definir as tarefas, eu posso colocar "Estudando TS", ela será do projeto do plano de estudo do Typescript. Deixa ele contar um pouco, vou finalizar, ele desceu.
+
+[00:47] Vou colocar "Estudando Mutations", por exemplo, esse será do projeto do Vuex, finalizar aqui com 2 segundos. E o último, eu vou deixar sem projeto nenhum e vou dizer que eu estou "Estudando boas práticas de componentização". Vou iniciar aqui, vou finalizar, vou deixar ele fazer três, para fazer aquela escada bacana. Pronto.
+
+[01:15] Nós já conseguimos categorizar as nossas tarefas apontando uma tarefa para um projeto ou simplesmente deixando a tarefa solta. Mas está faltando exibir e é isso o que vamos fazer para fechar com chave de ouro o nosso Tracker. Vamos para o código. Nós vamos entrar no nosso componente "Tarefa.vue", que é aquele componente que exibe aquele card no nosso Tracker. Nós já temos a descrição. O que nós vamos fazer?
+
+[01:42] Vamos criar uma outra <div> aqui, logo depois da descrição. Vamos trazer algumas classes para ela, ela é uma column e eu vou dizer que ela tem uma proporção para três colunas <div class="column is-4">. E antes, onde eu tinha a proporção column is-7 eu vou colocar para quatro, column is-4, para ele manter o mesmo espaçamento que ele tinha, só que agora estou dividindo em duas.
+
+[02:06] E vamos exibir o nosso projeto, {{ tarefa.projeto}}. É aqui que entra uma coisa que pode gerar um erro: a tarefa pode ou não ter um projeto. Como estamos utilizando o Typescript, temos um operador que chama nullable operator. Então, o que eu quero fazer? Se eu tenho o projeto, vou colocar uma interrogação aqui, eu quero pegar o nome dele.
+
+[02:35] Se eu tenho o projeto, eu quero pegar o nome dele. Se não, eu vou exibir para o usuário um “N/D", de não disponível, ou seja, ele não tem um projeto vinculado ali, {{ tarefa.projeto.nome || 'N/D' }}. Com isso, se eu tiver uma tarefa aqui, que ele vá repetir dentro do v-for, e essa tarefa não tiver um projeto, ele não vai quebrar e dar aquele erro que você está lendo a propriedade nome undefined.
+
+[03:01] Aquele erro chato, que acontece com frequência. Vamos salvar aqui. Agora estamos tratados, estamos cobertos. Se eu tenho o projeto, vou mostrar o nome, se eu não tenho, vou colocar ali um "N/D", um não disponível, para ficar bem elegante. Vamos voltar no navegador.
+
+[03:15] É exatamente isso o que acontece. Repare, eu tenho o meu "Estudando TS", está apontando para aquele projeto. O "Estudando Mutations" está aqui, apontando para o Vuex, e aqui, quando estou estudando boas práticas, eu não vinculei a projeto nenhum. Agora fechamos o ciclo da funcionalidade nova.
+
+[03:34] Já aprendemos aqui a notificar, trabalhamos com o Vuex e ficaram bem bacanas as funcionalidades novas, agora estamos prontos para jogar toda essa feature nova para a produção fazer a nossa publicação.
+
+@@06
+Fragilidade dos Mixins
+
+Nós vimos duas formas distintas de reuso de código com Vue3. No caso dos mixins, apontamos duas fragilidades que podem ser prejudiciais para a nossa aplicação. Quais são elas?
+
+Dependência implícita e possível colisão de nomes.
+ 
+Alternativa correta! Exatamente! Além de não ficar muito claro para as pessoas desenvolvedoras de onde vem as coisas, corremos o risco de usar nomes que vão colidir com as propriedades dos componentes.
+Alternativa correta
+Não existem! Mixins são balas de prata.
+ 
+Alternativa correta
+Performance. Os métodos executados pelos mixins são lentos.
+
+@@07
+Para saber mais: Publicando com Vercel
+
+Aqui você consegue visualizar a aula onde configuramos e publicamos o Alura Tracker na Vercel. Não deixe de publicar a sua versão e compartilhar no fórum da Alura!
+
+https://cursos.alura.com.br/course/vue3-comecando-framework/task/97508
+
+@@08
+Faça como eu fiz
+
+Chegou a hora de você seguir todos os passos realizados por mim durante esta aula. Caso já tenha feito, excelente. Se ainda não, é importante que você execute o que foi visto nos vídeos para poder continuar com os próximos cursos que tenham este como pré-requisito.
+
+Continue com os seus estudos, e se houver dúvidas, não hesite em recorrer ao nosso fórum!
+
+@@09
+Projeto final do curso
+
+Caso queira começar daqui, você pode baixar o projeto da aula anterior nesse link.
+
+@@10
+O que aprendemos?
+
+Nessa aula, você aprendeu:
+Mixins;
+Como reaproveitar código e qual a fragilidade dessa técnica.
+Composition API;
+Como reaproveitar código de uma forma mais coesa e legível.
+Computed - debugging;
+Como depurar código de propriedades computadas.
+
+@@11
+Conclusão
+
+[00:00] Parabéns por você ter concluído mais um curso aqui na Alura, dessa vez de Vue 3. Nós prototipamos juntos a versão 2 do Alura Tracker, essa aplicação mega bacana que nos ajuda a controlar as tarefas que estamos executando no dia a dia.
+[00:15] Agora uma tarefa está diretamente vinculada a um projeto, então conseguimos organizar melhor o que estamos fazendo. Vamos dar uma olhada, vamos dar uma revisada, no tanto de coisa bacana que nós aprendemos para conseguirmos chegar nessa versão do Tracker. Vamos dar uma olhada, de cara, no nosso roteador.
+
+[00:35] Estamos usando e controlando rotas para exibir a funcionalidade atual para o usuário, então ele tem a sensação de estar navegando por uma aplicação, e o que estamos fazendo é controlar tudo no view router, evitando que a página fique recarregando. Nós conseguimos esconder e exibir componentes baseado na rota atual. E uma das coisas que nós mais mexemos foi no estado da aplicação.
+
+[00:56] Nós temos projetos, temos notificações, nós compartilhamos esse estado através dos componentes. Nós adicionamos, removemos e alteramos itens no estado o tempo todo. Além disso, nós criamos o notificador e reaproveitamos código.
+
+[01:13] Seja no mixin, ou seja, via hook, nós vimos várias formas diferentes de fazer isso, foi mega bacana. Nós vimos vantagens e desvantagens de cada uma. Foi incrível trabalhar com você na versão 2 do Alura Tracker. Eu espero que você tenha gostado tanto quanto eu e até a próxima. Vida longa e próspera.
